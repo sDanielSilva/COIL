@@ -50,6 +50,103 @@
       },
     })
   );
+  imageryViewModels.push(
+    new Cesium.ProviderViewModel({
+      name: "Positron without labels",
+      tooltip: "CartoDB Positron without labels basemap",
+      iconUrl:
+        "https://a.basemaps.cartocdn.com/rastertiles/light_nolabels/5/15/12.png",
+      creationFunction: function () {
+        return new Cesium.UrlTemplateImageryProvider({
+          url: "https://{s}.basemaps.cartocdn.com/rastertiles/light_nolabels/{z}/{x}/{y}.png",
+          credit: CartoAttribution,
+          minimumLevel: 0,
+          maximumLevel: 22,
+        });
+      },
+    })
+  );
+
+  imageryViewModels.push(
+    new Cesium.ProviderViewModel({
+      name: "Dark Matter without labels",
+      tooltip: "CartoDB Dark Matter without labels basemap",
+      iconUrl:
+        "https://a.basemaps.cartocdn.com/rastertiles/dark_nolabels/5/15/12.png",
+      creationFunction: function () {
+        return new Cesium.UrlTemplateImageryProvider({
+          url: "https://{s}.basemaps.cartocdn.com/rastertiles/dark_nolabels/{z}/{x}/{y}.png",
+          credit: CartoAttribution,
+          minimumLevel: 0,
+          maximumLevel: 22,
+        });
+      },
+    })
+  );
+  imageryViewModels.push(
+    new Cesium.ProviderViewModel({
+      name: "Voyager",
+      tooltip: "CartoDB Voyager basemap",
+      iconUrl:
+        "https://a.basemaps.cartocdn.com/rastertiles/voyager_labels_under/5/15/12.png",
+      creationFunction: function () {
+        return new Cesium.UrlTemplateImageryProvider({
+          url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png",
+          credit: CartoAttribution,
+          minimumLevel: 0,
+          maximumLevel: 22,
+        });
+      },
+    })
+  );
+  imageryViewModels.push(
+    new Cesium.ProviderViewModel({
+      name: "Voyager without labels",
+      tooltip: "CartoDB Voyager without labels basemap",
+      iconUrl:
+        "https://a.basemaps.cartocdn.com/rastertiles/voyager_nolabels/5/15/12.png",
+      creationFunction: function () {
+        return new Cesium.UrlTemplateImageryProvider({
+          url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}.png",
+          credit: CartoAttribution,
+          minimumLevel: 0,
+          maximumLevel: 22,
+        });
+      },
+    })
+  );
+/*   imageryViewModels.push(
+    new Cesium.ProviderViewModel({
+      name: "National Map Satellite",
+      iconUrl:
+        "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/4/6/4",
+      creationFunction: function () {
+        return new Cesium.UrlTemplateImageryProvider({
+          url: "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}",
+          credit:
+            'Tile data from <a href="https://basemap.nationalmap.gov/">USGS</a>',
+          minimumLevel: 0,
+          maximumLevel: 22,
+        });
+      },
+    })
+  ); */
+  imageryViewModels.push(
+    new Cesium.ProviderViewModel({
+      name: "Dark Matter",
+      tooltip: "CartoDB Dark Matter basemap",
+      iconUrl:
+        "https://a.basemaps.cartocdn.com/rastertiles/dark_all/5/15/12.png",
+      creationFunction: function () {
+        return new Cesium.UrlTemplateImageryProvider({
+          url: "https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png",
+          credit: CartoAttribution,
+          minimumLevel: 0,
+          maximumLevel: 22,
+        });
+      },
+    })
+  );
 
   // Initialize the viewer
   viewer = new Cesium.Viewer("cesiumContainer", {
@@ -62,7 +159,7 @@
     infoBox: false,
     homeButton: false,
     selectionIndicator: false,
-    fullscreenButton: false,
+    fullscreenButton: true,
     selectionIndicator: false,
     selectedTerrainProviderViewModel: terrain[1],
   });
@@ -76,7 +173,13 @@
 
   //Enable lighting. You can comment the following line to see the effect.
   //Better - you can transform this in a checkbox
+
   viewer.scene.globe.enableLighting = true;
+  const checkbox_lighting = document.getElementById("lighting");
+
+  checkbox_lighting.addEventListener("change", (event) => {
+    viewer.scene.globe.enableLighting = event.target.checked;
+  });
 
   //Add the tiles and the DTN/DSM
 
@@ -93,19 +196,38 @@
     await Cesium.IonImageryProvider.fromAssetId(2587562)
   );
 
-  const arvores = await Cesium.IonResource.fromAssetId(2587574);
-  const dataSource = await Cesium.GeoJsonDataSource.load(arvores, {
-    clampToGround: true,
-  });
+  let treesAdded = false;
 
-  viewer.dataSources.add(dataSource);
+  const checkbox_arvores = document.getElementById("arvores");
+  const counter = document.getElementById("counter");
 
-  dataSource.entities.values.forEach(function (entity) {
-    entity.point = new Cesium.PointGraphics({
-      color: Cesium.Color.GREENYELLOW,
-      pixelSize: 6,
-      heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-    });
+  checkbox_arvores.addEventListener("change", async (event) => {
+    if (event.target.checked) {
+      if (!treesAdded) {
+        const arvores = await Cesium.IonResource.fromAssetId(2587574);
+        dataSource = await Cesium.GeoJsonDataSource.load(arvores, {
+          clampToGround: true,
+        });
+
+        viewer.dataSources.add(dataSource);
+
+        dataSource.entities.values.forEach(function (entity) {
+          entity.point = new Cesium.PointGraphics({
+            color: Cesium.Color.GREENYELLOW,
+            pixelSize: 6,
+            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+          });
+        });
+
+        treesAdded = true;
+      }
+
+      dataSource.show = true;
+      counter.style.display = "block";
+    } else {
+      dataSource.show = false;
+      counter.style.display = "none";
+    }
   });
 
   //Google Photorealistic 3D Tiles
@@ -116,11 +238,6 @@
 
   viewer.scene.globe.depthTestAgainstTerrain = true;
 
-  /*   //Load data (roads)
-  Cesium.GeoJsonDataSource.clampToGround = true;
-  var dataSource = Cesium.GeoJsonDataSource.load("buildings.json");
-  viewer.dataSources.add(dataSource); */
-
   //Cesium OSM buildings
   const tileset = viewer.scene.primitives.add(
     await Cesium.Cesium3DTileset.fromIonAssetId(96188)
@@ -130,20 +247,6 @@
   const checkbox_tileset = document.getElementById("tileset");
   const checkbox_dsm = document.getElementById("dsm");
   const checkbox_dtm = document.getElementById("dtm");
-  const checkbox_arvores = document.getElementById("arvores");
-
-
-  counter = document.getElementById("counter");
-
-  checkbox_arvores.addEventListener("change", (event) => {
-    if (event.target.checked) {
-      dataSource.show = true;
-      counter.style.display = "block";
-    } else {
-      dataSource.show = false;
-      counter.style.display = "none";
-    }
-  });
 
   checkbox_tileset.addEventListener("change", (event) => {
     if (event.target.checked) {

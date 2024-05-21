@@ -4,18 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>COIL Project - Group 4</title>
-    <!-- Include the CesiumJS JavaScript and CSS files -->
     <script src="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Cesium.js"></script>
     <link
       href="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Widgets/widgets.css"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="index/style.css" />
+    <style>
+      #counter {
+        display: none;
+      }
+    </style>
   </head>
 
   <body>
     <div id="toolbox">
       <ul id="layerswitcher">
+        <li>
+          <label><input type="checkbox" id="lighting" checked />Lighting</label>
+        </li>
         <li>
           <label><input type="checkbox" id="tileset" checked />Tileset</label>
         </li>
@@ -26,8 +33,9 @@
           <label><input type="checkbox" id="dtm" checked />DTM</label>
         </li>
         <li>
-          <label><input type="checkbox" id="arvores" checked />Trees</label>
+          <label><input type="checkbox" id="arvores" />Trees</label>
         </li>
+
         <li>
           <label id="counter">Tree counter: 1164</label>
         </li>
