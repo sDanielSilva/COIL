@@ -1,0 +1,80 @@
+html,
+body {
+  height: 100%;
+}
+
+#google_translate_element {
+  position: absolute;
+  top: 0.35em;
+  right: 3em !important;
+}
+
+h3 {
+  margin-top: 2em !important;
+}
+
+h3#sobre {
+  margin-top: 0.5 !important;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+
+p {
+  font-family: "Roboto", sans-serif;
+  text-align: justify;
+}
+
+.card-text {
+  text-align: left;
+}
+
+.container {
+  margin-top: 0 !important;
+  overflow-y: hidden !important;
+  max-height: none !important;
+  max-width: 50% !important;
+}
+
+.card {
+  margin-top: 1.5em !important;
+  width: 15em !important;
+  flex: none !important;
+}
+
+.card-body {
+  width: 15em !important;
+}
+
+.card-img-top {
+  width: 15em !important;
+  height: 15em !important;
+  object-fit: cover !important;
+}
+
+.btn {
+  font-size: 1.125em;
+  border-radius: 1em;
+  background-color: #0077b6;
+  transition-duration: 0.4s;
+  margin: 1.25em 0;
+  margin-left: 1.25em;
+}
+
+.btn:hover {
+  background-color: #03045e;
+  color: white;
+  box-shadow: 0 0.75em 1.375em rgba(0, 0, 0, 0.09),
+    0 0.4375em 0.4375em rgba(0, 0, 0, 0.12);
+}
+
+.navbar {
+  background-color: #0077b6 !important;
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+.navbar-brand {
+  color: rgb(255, 255, 255) !important;
+}

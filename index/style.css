@@ -1,0 +1,84 @@
+/* style.css */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap"); /* Importa a fonte Poppins do Google Fonts */
+
+#cesiumContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  font-family: "Poppins", sans-serif; /* Atualiza a fonte para Poppins */
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  height: 100%;
+}
+
+#toolbox {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  padding: 3px;
+  border-radius: 4px;
+  z-index: 1000;
+}
+
+#layerswitcher {
+  margin: 0;
+  padding: 10px;
+  border-radius: 4px;
+  background: rgba(0, 118, 182, 0.85);
+  list-style-type: none;
+  transition: all 0.3s ease;
+  box-shadow: 0px 12px 22px rgba(0, 0, 0, 0.09), 0px 7px 7px rgba(0, 0, 0, 0.12);
+}
+
+#layerswitcher li {
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+}
+
+#layerswitcher li:hover {
+  transform: scale(1.1);
+  background: #03045e;
+  /* Atualiza a cor de destaque para um cinza médio */
+}
+
+#layerswitcher li label {
+  cursor: pointer;
+  color: #ffffff; /* Atualiza a cor do texto para um cinza escuro */
+}
+
+#layerswitcher li input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+.sobre-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background-color: #0077b6;
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  font-size: 18px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  border-radius: 16px; /* Rounded corners */
+}
+
+.sobre-btn:hover {
+  background-color: #03045e;
+  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.09), 0 7px 7px rgba(0, 0, 0, 0.12); /* Larger shadow for hover effect */
+}
