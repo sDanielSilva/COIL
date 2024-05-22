@@ -115,7 +115,7 @@
       },
     })
   );
-/*   imageryViewModels.push(
+  /*   imageryViewModels.push(
     new Cesium.ProviderViewModel({
       name: "National Map Satellite",
       iconUrl:
@@ -183,20 +183,59 @@
 
   //Add the tiles and the DTN/DSM
 
-  const tileset_mafra = viewer.scene.primitives.add(
+  // Adicione os tilesets
+  const tileset1 = viewer.scene.primitives.add(
+    await Cesium.Cesium3DTileset.fromIonAssetId(2588151)
+  );
+  const tileset2 = viewer.scene.primitives.add(
     await Cesium.Cesium3DTileset.fromIonAssetId(2587289)
   );
-  viewer.camera.flyToBoundingSphere(tileset_mafra.root.boundingSphere);
 
-  const dtm_mafra = viewer.imageryLayers.addImageryProvider(
+  const tileset3 = viewer.scene.primitives.add(
+    await Cesium.Cesium3DTileset.fromIonAssetId(2588138)
+  );
+
+  // Obtenha as esferas delimitadoras de cada tileset
+  const boundingSphere1 = tileset1.root.boundingSphere;
+  const boundingSphere2 = tileset2.root.boundingSphere;
+  const boundingSphere3 = tileset3.root.boundingSphere;
+
+  // Calcule a esfera delimitadora que engloba ambas as esferas delimitadoras
+  const boundingSphere = Cesium.BoundingSphere.union(
+    boundingSphere1,
+    boundingSphere2,
+    boundingSphere3
+  );
+
+  // Voe para a esfera delimitadora que engloba ambas as esferas delimitadoras
+  viewer.camera.flyToBoundingSphere(boundingSphere);
+
+  const dtm1 = viewer.imageryLayers.addImageryProvider(
     await Cesium.IonImageryProvider.fromAssetId(2587558)
   );
 
-  const dsm_mafra = viewer.imageryLayers.addImageryProvider(
+  const dtm2 = viewer.imageryLayers.addImageryProvider(
+    await Cesium.IonImageryProvider.fromAssetId(2588152)
+  );
+
+  const dtm3 = viewer.imageryLayers.addImageryProvider(
+    await Cesium.IonImageryProvider.fromAssetId(2588195)
+  );
+
+  const dsm1 = viewer.imageryLayers.addImageryProvider(
     await Cesium.IonImageryProvider.fromAssetId(2587562)
   );
 
+  const dsm2 = viewer.imageryLayers.addImageryProvider(
+    await Cesium.IonImageryProvider.fromAssetId(2588154)
+  );
+
+  const dsm3 = viewer.imageryLayers.addImageryProvider(
+    await Cesium.IonImageryProvider.fromAssetId(2588194)
+  );
+
   let treesAdded = false;
+  let dataSource1, dataSource2;
 
   const checkbox_arvores = document.getElementById("arvores");
   const counter = document.getElementById("counter");
@@ -204,28 +243,45 @@
   checkbox_arvores.addEventListener("change", async (event) => {
     if (event.target.checked) {
       if (!treesAdded) {
-        const arvores = await Cesium.IonResource.fromAssetId(2587574);
-        dataSource = await Cesium.GeoJsonDataSource.load(arvores, {
+        const arvores1 = await Cesium.IonResource.fromAssetId(2587574);
+        const arvores2 = await Cesium.IonResource.fromAssetId(2588181);
+        const arvores3 = await Cesium.IonResource.fromAssetId(2588196);
+
+        dataSource1 = await Cesium.GeoJsonDataSource.load(arvores1, {
+          clampToGround: true,
+        });
+        dataSource2 = await Cesium.GeoJsonDataSource.load(arvores2, {
+          clampToGround: true,
+        });
+        dataSource3 = await Cesium.GeoJsonDataSource.load(arvores3, {
           clampToGround: true,
         });
 
-        viewer.dataSources.add(dataSource);
+        viewer.dataSources.add(dataSource1);
+        viewer.dataSources.add(dataSource2);
+        viewer.dataSources.add(dataSource3);
 
-        dataSource.entities.values.forEach(function (entity) {
-          entity.point = new Cesium.PointGraphics({
-            color: Cesium.Color.GREENYELLOW,
-            pixelSize: 6,
-            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+        [dataSource1, dataSource2, dataSource3].forEach((dataSource) => {
+          dataSource.entities.values.forEach(function (entity) {
+            entity.point = new Cesium.PointGraphics({
+              color: Cesium.Color.GREENYELLOW,
+              pixelSize: 6,
+              heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+            });
           });
         });
 
         treesAdded = true;
       }
 
-      dataSource.show = true;
+      dataSource1.show = true;
+      dataSource2.show = true;
+      dataSource3.show = true;
       counter.style.display = "block";
     } else {
-      dataSource.show = false;
+      dataSource1.show = false;
+      dataSource2.show = false;
+      dataSource3.show = false;
       counter.style.display = "none";
     }
   });
@@ -250,60 +306,74 @@
 
   checkbox_tileset.addEventListener("change", (event) => {
     if (event.target.checked) {
-      tileset_mafra.show = true;
+      tileset1.show = true;
+      tileset2.show = true;
+      tileset3.show = true;
     } else {
-      tileset_mafra.show = false;
+      tileset1.show = false;
+      tileset2.show = false;
+      tileset3.show = false;
     }
   });
 
   checkbox_dtm.addEventListener("change", (event) => {
     if (event.target.checked) {
-      fadeIn(dtm_mafra);
+      fadeIn(dtm1, dtm2, dtm3);
     } else {
-      fadeOut(dtm_mafra);
+      fadeOut(dtm1, dtm2, dtm3);
     }
   });
 
   checkbox_dsm.addEventListener("change", (event) => {
     if (event.target.checked) {
-      fadeIn(dsm_mafra);
+      fadeIn(dsm1, dsm2, dsm3);
     } else {
-      fadeOut(dsm_mafra);
+      fadeOut(dsm1, dsm2, dsm3);
     }
   });
 
   let isAnimating = false;
 
-  function fadeIn(layer) {
+  function fadeIn(...layers) {
     if (isAnimating) return;
     isAnimating = true;
 
-    layer.show = true;
-    layer.alpha = 0;
+    layers.forEach((layer) => {
+      layer.show = true;
+      layer.alpha = 0;
+    });
+
     viewer.scene.requestRender();
     viewer.scene.postRender.addEventListener(function () {
-      layer.alpha += 0.014;
-      if (layer.alpha >= 1) {
-        viewer.scene.postRender.removeEventListener(arguments.callee);
-        isAnimating = false;
-      }
+      layers.forEach((layer) => {
+        layer.alpha += 0.014;
+        if (layer.alpha >= 1) {
+          viewer.scene.postRender.removeEventListener(arguments.callee);
+          isAnimating = false;
+        }
+      });
       viewer.scene.requestRender();
     });
   }
 
-  function fadeOut(layer) {
+  function fadeOut(...layers) {
     if (isAnimating) return;
     isAnimating = true;
 
-    layer.alpha = 1;
+    layers.forEach((layer) => {
+      layer.alpha = 1;
+    });
+
     viewer.scene.requestRender();
     viewer.scene.postRender.addEventListener(function () {
-      layer.alpha -= 0.014;
-      if (layer.alpha <= 0) {
-        layer.show = false;
-        viewer.scene.postRender.removeEventListener(arguments.callee);
-        isAnimating = false;
-      }
+      layers.forEach((layer) => {
+        layer.alpha -= 0.014;
+        if (layer.alpha <= 0) {
+          layer.show = false;
+          viewer.scene.postRender.removeEventListener(arguments.callee);
+          isAnimating = false;
+        }
+      });
       viewer.scene.requestRender();
     });
   }
