@@ -1,34 +1,71 @@
-// main.js
 (async function () {
   // Cesium ion credentials (only needed if you don't want to create yourself the tileset).
   // Check your AccessToken in Cesium Ion.
   Cesium.Ion.defaultAccessToken =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI0N2ZmMGFlNS01MTdjLTQ0M2UtYTY1Mi0wY2JhYjUwNjNmOGMiLCJpZCI6MjE2NzMwLCJpYXQiOjE3MTYyODcwNDR9.kZ-qUEewUHDrSWLHZ42X9XjIVfRsMKOaYa2aPu0KuBM";
 
-  //Next lines are for creating the scene - terrain providers and layer switcher
-
-  var terrain = Cesium.createDefaultTerrainProviderViewModels();
-
   /* Per Carto's website regarding basemap attribution: https://carto.com/help/working-with-data/attribution/#basemaps */
   let CartoAttribution =
     'Map tiles by <a href="https://carto.com">Carto</a>, under CC BY 3.0. Data by <a href="https://www.openstreetmap.org/">OpenStreetMap</a>, under ODbL.';
 
   // Create ProviderViewModel based on different imagery sources
-  // - these can be used without Cesium Ion
   var imageryViewModels = [];
   imageryViewModels.push(
     new Cesium.ProviderViewModel({
-      name: "OpenStreetMap",
+      name: "Open Street Map",
       iconUrl: Cesium.buildModuleUrl(
         "Widgets/Images/ImageryProviders/openStreetMap.png"
       ),
-      tooltip:
-        "OpenStreetMap (OSM) is a collaborative project to create a free editable \
-  map of the world.\nhttps://www.openstreetmap.org",
+      tooltip: "OpenStreetMap (OSM)",
       creationFunction: function () {
         return new Cesium.UrlTemplateImageryProvider({
           url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
           subdomains: "abc",
+          minimumLevel: 0,
+          maximumLevel: 22,
+        });
+      },
+    })
+  );
+  imageryViewModels.push(
+    new Cesium.ProviderViewModel({
+      name: "Bing Aerial",
+      iconUrl: Cesium.buildModuleUrl(
+        "Widgets/Images/ImageryProviders/bingAerial.png"
+      ),
+      tooltip: "Bing Aerial",
+      creationFunction: async function () {
+        return await Cesium.IonImageryProvider.fromAssetId(2);
+      },
+    })
+  );
+
+  imageryViewModels.push(
+    new Cesium.ProviderViewModel({
+      name: "Dark Matter",
+      tooltip: "CartoDB Dark Matter basemap",
+      iconUrl:
+        "https://a.basemaps.cartocdn.com/rastertiles/dark_all/5/15/12.png",
+      creationFunction: function () {
+        return new Cesium.UrlTemplateImageryProvider({
+          url: "https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png",
+          credit: CartoAttribution,
+          minimumLevel: 0,
+          maximumLevel: 22,
+        });
+      },
+    })
+  );
+  imageryViewModels.push(
+    new Cesium.ProviderViewModel({
+      name: "Dark Matter without labels",
+      tooltip: "CartoDB Dark Matter without labels basemap",
+      iconUrl:
+        "https://a.basemaps.cartocdn.com/rastertiles/dark_nolabels/5/15/12.png",
+      creationFunction: function () {
+        return new Cesium.UrlTemplateImageryProvider({
+          url: "https://{s}.basemaps.cartocdn.com/rastertiles/dark_nolabels/{z}/{x}/{y}.png",
+          credit: CartoAttribution,
           minimumLevel: 0,
           maximumLevel: 22,
         });
@@ -59,23 +96,6 @@
       creationFunction: function () {
         return new Cesium.UrlTemplateImageryProvider({
           url: "https://{s}.basemaps.cartocdn.com/rastertiles/light_nolabels/{z}/{x}/{y}.png",
-          credit: CartoAttribution,
-          minimumLevel: 0,
-          maximumLevel: 22,
-        });
-      },
-    })
-  );
-
-  imageryViewModels.push(
-    new Cesium.ProviderViewModel({
-      name: "Dark Matter without labels",
-      tooltip: "CartoDB Dark Matter without labels basemap",
-      iconUrl:
-        "https://a.basemaps.cartocdn.com/rastertiles/dark_nolabels/5/15/12.png",
-      creationFunction: function () {
-        return new Cesium.UrlTemplateImageryProvider({
-          url: "https://{s}.basemaps.cartocdn.com/rastertiles/dark_nolabels/{z}/{x}/{y}.png",
           credit: CartoAttribution,
           minimumLevel: 0,
           maximumLevel: 22,
@@ -115,53 +135,25 @@
       },
     })
   );
-  /*   imageryViewModels.push(
-    new Cesium.ProviderViewModel({
-      name: "National Map Satellite",
-      iconUrl:
-        "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/4/6/4",
-      creationFunction: function () {
-        return new Cesium.UrlTemplateImageryProvider({
-          url: "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}",
-          credit:
-            'Tile data from <a href="https://basemap.nationalmap.gov/">USGS</a>',
-          minimumLevel: 0,
-          maximumLevel: 22,
-        });
-      },
-    })
-  ); */
-  imageryViewModels.push(
-    new Cesium.ProviderViewModel({
-      name: "Dark Matter",
-      tooltip: "CartoDB Dark Matter basemap",
-      iconUrl:
-        "https://a.basemaps.cartocdn.com/rastertiles/dark_all/5/15/12.png",
-      creationFunction: function () {
-        return new Cesium.UrlTemplateImageryProvider({
-          url: "https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png",
-          credit: CartoAttribution,
-          minimumLevel: 0,
-          maximumLevel: 22,
-        });
-      },
-    })
-  );
 
   // Initialize the viewer
   viewer = new Cesium.Viewer("cesiumContainer", {
     sceneModePicker: false,
     imageryProviderViewModels: imageryViewModels,
-    selectedImageryProviderViewModel: imageryViewModels[2],
+    selectedImageryProviderViewModel: imageryViewModels[1],
     geocoder: false,
     animation: false,
     timeline: false,
     infoBox: false,
-    homeButton: false,
+    homeButton: true,
     selectionIndicator: false,
     fullscreenButton: true,
     selectionIndicator: false,
-    selectedTerrainProviderViewModel: terrain[1],
+    terrain: Cesium.Terrain.fromWorldTerrain({
+      requestVertexNormals: true,
+      requestWaterMask: true,
+    }),
+    terrainProviderViewModels: [],
   });
 
   viewer.camera.setView({
@@ -181,9 +173,6 @@
     viewer.scene.globe.enableLighting = event.target.checked;
   });
 
-  //Add the tiles and the DTN/DSM
-
-  // Adicione os tilesets
   const tileset1 = viewer.scene.primitives.add(
     await Cesium.Cesium3DTileset.fromIonAssetId(2588151)
   );
@@ -206,7 +195,6 @@
     boundingSphere2,
     boundingSphere3
   );
-
   // Voe para a esfera delimitadora que engloba ambas as esferas delimitadoras
   viewer.camera.flyToBoundingSphere(boundingSphere);
 
@@ -234,44 +222,41 @@
     await Cesium.IonImageryProvider.fromAssetId(2588194)
   );
 
-  let treesAdded = false;
-  let dataSource1, dataSource2;
-
   const checkbox_arvores = document.getElementById("arvores");
   const counter = document.getElementById("counter");
 
+  let dataSource1, dataSource2, dataSource3;
+
+  async function loadDataSource(assetId) {
+    const resource = await Cesium.IonResource.fromAssetId(assetId);
+    const dataSource = await Cesium.GeoJsonDataSource.load(resource, {
+      clampToGround: true,
+    });
+
+    dataSource.entities.values.forEach(function (entity) {
+      entity.point = new Cesium.PointGraphics({
+        color: Cesium.Color.GREENYELLOW,
+        pixelSize: 5,
+        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+      });
+    });
+
+    return dataSource;
+  }
+
   checkbox_arvores.addEventListener("change", async (event) => {
     if (event.target.checked) {
-      if (!treesAdded) {
-        const arvores1 = await Cesium.IonResource.fromAssetId(2587574);
-        const arvores2 = await Cesium.IonResource.fromAssetId(2588181);
-        const arvores3 = await Cesium.IonResource.fromAssetId(2588196);
-
-        dataSource1 = await Cesium.GeoJsonDataSource.load(arvores1, {
-          clampToGround: true,
-        });
-        dataSource2 = await Cesium.GeoJsonDataSource.load(arvores2, {
-          clampToGround: true,
-        });
-        dataSource3 = await Cesium.GeoJsonDataSource.load(arvores3, {
-          clampToGround: true,
-        });
-
+      if (!dataSource1) {
+        dataSource1 = await loadDataSource(2587574);
         viewer.dataSources.add(dataSource1);
+      }
+      if (!dataSource2) {
+        dataSource2 = await loadDataSource(2588181);
         viewer.dataSources.add(dataSource2);
+      }
+      if (!dataSource3) {
+        dataSource3 = await loadDataSource(2588196);
         viewer.dataSources.add(dataSource3);
-
-        [dataSource1, dataSource2, dataSource3].forEach((dataSource) => {
-          dataSource.entities.values.forEach(function (entity) {
-            entity.point = new Cesium.PointGraphics({
-              color: Cesium.Color.GREENYELLOW,
-              pixelSize: 6,
-              heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-            });
-          });
-        });
-
-        treesAdded = true;
       }
 
       dataSource1.show = true;
@@ -286,51 +271,44 @@
     }
   });
 
-  //Google Photorealistic 3D Tiles
-
-  /*   const gtileset = viewer.scene.primitives.add(
-  await Cesium.Cesium3DTileset.fromIonAssetId(2275207),
-  ); */
-
   viewer.scene.globe.depthTestAgainstTerrain = true;
-
-  //Cesium OSM buildings
-  const tileset = viewer.scene.primitives.add(
-    await Cesium.Cesium3DTileset.fromIonAssetId(96188)
-  );
 
   // And finally, the code for the checkboxes
   const checkbox_tileset = document.getElementById("tileset");
   const checkbox_dsm = document.getElementById("dsm");
   const checkbox_dtm = document.getElementById("dtm");
 
-  checkbox_tileset.addEventListener("change", (event) => {
-    if (event.target.checked) {
-      tileset1.show = true;
-      tileset2.show = true;
-      tileset3.show = true;
-    } else {
-      tileset1.show = false;
-      tileset2.show = false;
-      tileset3.show = false;
-    }
-  });
+  function handleCheckboxChange(event) {
+    const target = event.target;
+    const isChecked = target.checked;
+    const id = target.id;
 
-  checkbox_dtm.addEventListener("change", (event) => {
-    if (event.target.checked) {
-      fadeIn(dtm1, dtm2, dtm3);
-    } else {
-      fadeOut(dtm1, dtm2, dtm3);
+    switch (id) {
+      case "tileset":
+        tileset1.show = isChecked;
+        tileset2.show = isChecked;
+        tileset3.show = isChecked;
+        break;
+      case "dtm":
+        if (isChecked) {
+          fadeIn(dtm1, dtm2, dtm3);
+        } else {
+          fadeOut(dtm1, dtm2, dtm3);
+        }
+        break;
+      case "dsm":
+        if (isChecked) {
+          fadeIn(dsm1, dsm2, dsm3);
+        } else {
+          fadeOut(dsm1, dsm2, dsm3);
+        }
+        break;
     }
-  });
+  }
 
-  checkbox_dsm.addEventListener("change", (event) => {
-    if (event.target.checked) {
-      fadeIn(dsm1, dsm2, dsm3);
-    } else {
-      fadeOut(dsm1, dsm2, dsm3);
-    }
-  });
+  checkbox_tileset.addEventListener("change", handleCheckboxChange);
+  checkbox_dtm.addEventListener("change", handleCheckboxChange);
+  checkbox_dsm.addEventListener("change", handleCheckboxChange);
 
   let isAnimating = false;
 
@@ -377,4 +355,11 @@
       viewer.scene.requestRender();
     });
   }
+
+  viewer.homeButton.viewModel.command.beforeExecute.addEventListener(function (
+    e
+  ) {
+    e.cancel = true;
+    viewer.camera.flyToBoundingSphere(boundingSphere);
+  });
 })();
