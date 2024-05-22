@@ -151,7 +151,7 @@
     selectionIndicator: false,
     terrain: Cesium.Terrain.fromWorldTerrain({
       requestVertexNormals: true,
-      requestWaterMask: true,
+      requestWaterMask: false,
     }),
     terrainProviderViewModels: [],
   });
