@@ -140,7 +140,7 @@
   viewer = new Cesium.Viewer("cesiumContainer", {
     sceneModePicker: false,
     imageryProviderViewModels: imageryViewModels,
-    selectedImageryProviderViewModel: imageryViewModels[1],
+    selectedImageryProviderViewModel: imageryViewModels[2],
     geocoder: false,
     animation: false,
     timeline: false,
