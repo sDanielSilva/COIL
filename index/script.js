@@ -163,6 +163,10 @@
     },
   });
 
+  /*   const tileset = viewer.scene.primitives.add(
+    await Cesium.Cesium3DTileset.fromIonAssetId(2275207),
+  ); */
+
   //Enable lighting. You can comment the following line to see the effect.
   //Better - you can transform this in a checkbox
 
