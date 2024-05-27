@@ -170,7 +170,7 @@
   //Enable lighting. You can comment the following line to see the effect.
   //Better - you can transform this in a checkbox
 
-  viewer.scene.globe.enableLighting = true;
+  viewer.scene.globe.enableLighting = false;
   const checkbox_lighting = document.getElementById("lighting");
 
   checkbox_lighting.addEventListener("change", (event) => {
