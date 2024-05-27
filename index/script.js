@@ -231,7 +231,13 @@
 
   let dataSource1, dataSource2, dataSource3;
 
+  let cache = {};
+
   async function loadDataSource(assetId) {
+    if (cache[assetId]) {
+      return cache[assetId];
+    }
+
     const resource = await Cesium.IonResource.fromAssetId(assetId);
     const dataSource = await Cesium.GeoJsonDataSource.load(resource, {
       clampToGround: true,
@@ -244,6 +250,8 @@
         heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
       });
     });
+
+    cache[assetId] = dataSource;
 
     return dataSource;
   }
